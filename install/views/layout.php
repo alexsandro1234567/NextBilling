@@ -1,63 +1,98 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instalação do Sistema</title>
-
-    <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="install/assets/css/install.css">
-</head>
-<body class="hold-transition login-page">
-    <div class="login-box" style="width: 800px;">
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#" class="h1">
-                    <img src="install/assets/img/logo.png" alt="Logo" class="brand-image" style="height: 50px;">
-                </a>
-            </div>
-            <div class="card-body">
-                <!-- Steps -->
-                <div class="install-steps mb-4">
-                    <?php 
-                    $currentStepFound = false;
-                    foreach ($this->getSteps() as $stepKey => $stepInfo): 
-                        $isActive = $stepKey === $this->getCurrentStep();
-                        $isCompleted = !$currentStepFound && !$isActive;
-                        if ($isActive) $currentStepFound = true;
-                    ?>
-                        <div class="step <?php echo $isActive ? 'active' : ($isCompleted ? 'completed' : ''); ?>">
-                            <div class="step-icon">
-                                <i class="fas <?php echo $stepInfo['icon']; ?>"></i>
-                            </div>
-                            <div class="step-label"><?php echo $stepInfo['title']; ?></div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
 
-                <!-- Content -->
-                <?php include __DIR__ . '/' . $this->getCurrentStep() . '.php'; ?>
+    <style>
+        .nav-steps {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 10px;
+        }
+
+        .nav-step {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            color: #666;
+            border-radius: 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .nav-step.active {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+
+        .nav-step i {
+            font-size: 14px;
+        }
+
+        .nav-step.completed {
+            background: #198754;
+            color: white;
+            border-color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Logo -->
+        <div class="text-center mb-4">
+            <img src="install/assets/img/logo.png" alt="Logo" class="img-fluid" style="max-height: 100px;">
+        </div>
+
+        <!-- Menu de passos (não clicável) -->
+        <div class="nav-steps">
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'welcome' ? 'active' : ''; ?>">
+                <i class="fas fa-home"></i>
+                <span>Bem-vindo</span>
+            </div>
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'requirements' ? 'active' : ''; ?>">
+                <i class="fas fa-server"></i>
+                <span>Requisitos</span>
+            </div>
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'permissions' ? 'active' : ''; ?>">
+                <i class="fas fa-lock"></i>
+                <span>Permissões</span>
+            </div>
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'database' ? 'active' : ''; ?>">
+                <i class="fas fa-database"></i>
+                <span>Banco de Dados</span>
+            </div>
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'settings' ? 'active' : ''; ?>">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+            </div>
+            <div class="nav-step <?php echo $this->getCurrentStep() === 'install' ? 'active' : ''; ?>">
+                <i class="fas fa-check"></i>
+                <span>Instalação</span>
             </div>
         </div>
 
-        <div class="text-center mt-3 text-sm text-muted">
-            &copy; <?php echo date('Y'); ?> Seu Nome. Todos os direitos reservados.
+        <!-- Conteúdo -->
+        <div class="content-wrapper">
+            <?php 
+            $currentStep = $this->getCurrentStep();
+            include __DIR__ . "/{$currentStep}.php";
+            ?>
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-    <!-- Custom JS -->
-    <script src="install/assets/js/install.js"></script>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

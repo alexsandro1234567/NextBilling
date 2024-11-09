@@ -185,7 +185,7 @@ button:disabled {
     z-index: 1;
 }
 
-.step {
+.install-step {
     position: relative;
     z-index: 2;
     background: #f4f6f9;
@@ -193,7 +193,7 @@ button:disabled {
     padding: 0 10px;
 }
 
-.step-icon {
+.install-step-icon {
     width: 40px;
     height: 40px;
     background: #fff;
@@ -207,30 +207,16 @@ button:disabled {
     transition: all 0.3s ease;
 }
 
-.step-label {
-    font-size: 12px;
-    color: #6c757d;
-    font-weight: 600;
+.install-step.active .install-step-icon {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
 }
 
-.step.active .step-icon {
-    background: #007bff;
-    border-color: #007bff;
-    color: #fff;
-}
-
-.step.active .step-label {
-    color: #007bff;
-}
-
-.step.completed .step-icon {
-    background: #28a745;
-    border-color: #28a745;
-    color: #fff;
-}
-
-.step.completed .step-label {
-    color: #28a745;
+.install-step.completed .install-step-icon {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
 }
 
 .requirement-item {
@@ -284,4 +270,165 @@ button:disabled {
 
 .card-body {
     padding: 2rem;
-} 
+}
+
+/* Menu de instalação - horizontal */
+.install-menu {
+    width: 100%;
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.install-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.install-menu li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.install-menu li.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.install-menu li i {
+    font-size: 16px;
+}
+
+/* Conteúdo principal */
+.main-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Tabela de requisitos */
+.requirements-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.requirements-table th,
+.requirements-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+/* Botões de ação */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 20px 0;
+}
+
+/* Estilos gerais */
+.requirements-page {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Tabela de requisitos */
+.requirements-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px 0;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.table th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Botões de ação */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+/* Alerta */
+.alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+/* Badges */
+.badge {
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.bg-success {
+    background: #28a745;
+    color: white;
+}
+
+.bg-danger {
+    background: #dc3545;
+    color: white;
+}

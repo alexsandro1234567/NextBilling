@@ -1,142 +1,186 @@
 <?php 
 $error = $data['error'] ?? null;
 $old = $data['old'] ?? [];
-$default = $data['default'] ?? [];
+$default = [
+    'host' => 'localhost',
+    'port' => '3306',
+    'name' => '',
+    'user' => 'root',
+    'pass' => ''
+];
+$default = array_merge($default, $data['default'] ?? []);
 ?>
 
-<div class="database-config">
-    <h4 class="text-center mb-4">
-        <i class="fas fa-database text-primary"></i>
-        Configuração do Banco de Dados
-    </h4>
-
-    <?php if ($error): ?>
-        <div class="alert alert-danger">
-            <i class="fas fa-exclamation-circle mr-2"></i>
-            <?php echo $error; ?>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" action="?step=database" class="database-form">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="form-group">
-                    <label for="db_host">
-                        <i class="fas fa-server mr-1"></i>
-                        Host
-                    </label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="db_host" 
-                           name="db_host" 
-                           value="<?php echo $old['db_host'] ?? $default['host']; ?>" 
-                           required>
-                </div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextBilling - Instalação</title>
+    <!-- Bootstrap CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .card {
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .btn {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Configuração do Banco de Dados</h2>
             </div>
-            
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="db_port">
-                        <i class="fas fa-plug mr-1"></i>
-                        Porta
-                    </label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="db_port" 
-                           name="db_port" 
-                           value="<?php echo $old['db_port'] ?? $default['port']; ?>" 
-                           required>
-                </div>
-            </div>
-        </div>
+            <div class="card-body">
+                <form id="database-form" method="POST">
+                    <div class="form-group">
+                        <label for="host">Host</label>
+                        <input type="text" class="form-control" id="host" name="host" value="localhost" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="db_name">
-                <i class="fas fa-database mr-1"></i>
-                Nome do Banco
-            </label>
-            <input type="text" 
-                   class="form-control" 
-                   id="db_name" 
-                   name="db_name" 
-                   value="<?php echo $old['db_name'] ?? $default['name']; ?>" 
-                   required>
-            <small class="form-text text-muted">
-                Se o banco não existir, tentaremos criá-lo automaticamente.
-            </small>
-        </div>
+                    <div class="form-group">
+                        <label for="port">Porta</label>
+                        <input type="text" class="form-control" id="port" name="port" value="3306" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="db_user">
-                <i class="fas fa-user mr-1"></i>
-                Usuário
-            </label>
-            <input type="text" 
-                   class="form-control" 
-                   id="db_user" 
-                   name="db_user" 
-                   value="<?php echo $old['db_user'] ?? $default['user']; ?>" 
-                   required>
-        </div>
+                    <div class="form-group">
+                        <label for="name">Nome do Banco</label>
+                        <input type="text" class="form-control" id="name" name="name" value="nextbilling" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="db_pass">
-                <i class="fas fa-key mr-1"></i>
-                Senha
-            </label>
-            <div class="input-group">
-                <input type="password" 
-                       class="form-control" 
-                       id="db_pass" 
-                       name="db_pass" 
-                       value="<?php echo $old['db_pass'] ?? $default['pass']; ?>">
-                <div class="input-group-append">
-                    <button type="button" 
-                            class="btn btn-outline-secondary" 
-                            onclick="togglePassword('db_pass')">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
+                    <div class="form-group">
+                        <label for="user">Usuário</label>
+                        <input type="text" class="form-control" id="user" name="user" value="root" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" class="form-control" id="senha" name="senha">
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Voltar</button>
+                        <button type="submit" class="btn btn-primary">Testar e Continuar</button>
+                    </div>
+                </form>
+
+                <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
             </div>
         </div>
-
-        <div class="row justify-content-between mt-4">
-            <div class="col-auto">
-                <a href="?step=permissions" class="btn btn-default">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Voltar
-                </a>
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">
-                    Testar e Continuar
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-
-    <div class="alert alert-info mt-4">
-        <h5>
-            <i class="fas fa-info-circle mr-2"></i>
-            Dicas:
-        </h5>
-        <ul class="mb-0">
-            <li>Certifique-se que o usuário tem permissão para criar bancos de dados</li>
-            <li>Para o XAMPP, geralmente o usuário é "root" sem senha</li>
-            <li>Para hospedagens, use os dados fornecidos pelo seu provedor</li>
-        </ul>
     </div>
-</div>
 
-<script>
-function togglePassword(id) {
-    const input = document.getElementById(id);
-    const type = input.type === 'password' ? 'text' : 'password';
-    input.type = type;
+    <!-- Bootstrap JS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    const icon = event.currentTarget.querySelector('i');
-    icon.classList.toggle('fa-eye');
-    icon.classList.toggle('fa-eye-slash');
+    <script>
+    document.getElementById('database-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const errorDiv = document.getElementById('error-message');
+        const successDiv = document.getElementById('success-message');
+        const submitButton = this.querySelector('button[type="submit"]');
+        
+        // Limpa mensagens anteriores
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+        
+        // Desabilita botão
+        submitButton.disabled = true;
+        submitButton.textContent = 'Testando...';
+        
+        // Envia dados
+        fetch('?step=database', {
+            method: 'POST',
+            body: new FormData(this)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                successDiv.textContent = data.message;
+                successDiv.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = '?step=settings';
+                }, 1000);
+            } else {
+                errorDiv.textContent = data.error;
+                errorDiv.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            errorDiv.textContent = 'Erro ao processar a requisição: ' + error.message;
+            errorDiv.style.display = 'block';
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Testar e Continuar';
+        });
+    });
+    </script>
+</body>
+</html>
+
+<style>
+.message-container {
+    margin-bottom: 20px;
 }
-</script> 
+
+.alert {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.alert-danger {
+    background-color: #fff2f2;
+    border-left: 4px solid #dc3545;
+    padding: 1.25rem;
+}
+
+.alert-danger i {
+    color: #dc3545;
+    margin-right: 1rem;
+}
+
+.alert-danger hr {
+    border-top-color: #f5c6cb;
+    margin: 1rem 0;
+}
+
+.alert-danger ul {
+    color: #666;
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+}
+
+.alert-heading {
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate__fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}
+</style> 

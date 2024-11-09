@@ -1,92 +1,145 @@
-<?php 
-$permissions = $data['permissions'] ?? [];
-$can_continue = $data['can_continue'] ?? false;
+<?php
+$permissionsData = $this->getPermissionsData();
+$permissions = $permissionsData['permissions'] ?? [];
+$canContinue = $permissionsData['can_continue'] ?? false;
+
+// Pegar o caminho base da instalação
+$basePath = dirname(dirname(dirname(__FILE__))); // Volta 2 níveis para chegar na raiz
+$basePath = str_replace('\\', '/', $basePath); // Normaliza barras para formato Unix
 ?>
 
-<div class="permissions-check">
-    <h4 class="text-center mb-4">
-        <i class="fas fa-lock text-primary"></i>
+<div class="permissions-page">
+    <h2 class="text-center mb-4">
+        <i class="fas fa-lock"></i>
         Verificação de Permissões de Diretórios
-    </h4>
+    </h2>
 
-    <div class="table-responsive">
-        <table class="table table-hover">
+    <div class="permissions-table">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Diretório</th>
                     <th>Permissão Atual</th>
                     <th>Permissão Necessária</th>
-                    <th class="text-center" width="150">Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($permissions as $dir): ?>
-                    <tr>
-                        <td>
-                            <i class="fas fa-folder text-warning mr-2"></i>
-                            <strong><?php echo $dir['directory']; ?></strong>
-                            <small class="d-block text-muted"><?php echo $dir['path']; ?></small>
-                        </td>
-                        <td>
-                            <code><?php echo $dir['current']; ?></code>
-                        </td>
-                        <td>
-                            <code><?php echo $dir['required']; ?></code>
-                        </td>
-                        <td class="text-center">
-                            <?php if ($dir['writable']): ?>
-                                <span class="badge badge-success">
-                                    <i class="fas fa-check"></i> Gravável
-                                </span>
-                            <?php else: ?>
-                                <span class="badge badge-danger">
-                                    <i class="fas fa-times"></i> Não Gravável
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                <?php foreach ($permissions as $permission): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($permission['directory']); ?></td>
+                    <td><?php echo htmlspecialchars($permission['current']); ?></td>
+                    <td><?php echo htmlspecialchars($permission['required']); ?></td>
+                    <td>
+                        <?php if ($permission['writable']): ?>
+                            <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                        <?php else: ?>
+                            <span class="badge bg-danger"><i class="fas fa-times"></i></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 
-    <div class="row justify-content-between mt-4">
-        <div class="col-auto">
-            <a href="?step=requirements" class="btn btn-default">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Voltar
-            </a>
-        </div>
-        <div class="col-auto">
-            <?php if ($can_continue): ?>
-                <a href="?step=database" class="btn btn-primary">
-                    Próximo
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            <?php else: ?>
-                <button class="btn btn-danger" disabled>
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    Corrija as Permissões
+    <div class="action-buttons">
+        <a href="?step=requirements" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        
+        <?php if (!$canContinue): ?>
+            <form method="post" class="d-inline">
+                <input type="hidden" name="action" value="force_create_directories">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-sync"></i> Forçar Criação de Diretórios
                 </button>
-            <?php endif; ?>
-        </div>
+            </form>
+        <?php endif; ?>
+
+        <?php if ($canContinue): ?>
+            <a href="?step=database" class="btn btn-primary">
+                Próximo <i class="fas fa-arrow-right"></i>
+            </a>
+        <?php endif; ?>
     </div>
 
-    <?php if (!$can_continue): ?>
-        <div class="alert alert-warning mt-4">
-            <h5>
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                Como corrigir as permissões?
-            </h5>
-            <p class="mb-0">
-                Para corrigir as permissões, execute os seguintes comandos no terminal:
-            </p>
-            <pre class="mt-2 bg-light p-3 rounded"><code>chmod -R 755 <?php echo BASE_PATH; ?>/storage
-chmod -R 755 <?php echo BASE_PATH; ?>/public/uploads
-chmod -R 755 <?php echo BASE_PATH; ?>/config</code></pre>
-            <p class="mt-2 mb-0">
-                Se você estiver usando Windows, certifique-se de que o usuário do servidor web (geralmente IUSR ou o usuário do PHP) 
-                tenha permissões de escrita nos diretórios listados acima.
-            </p>
+    <?php if (!$canContinue): ?>
+    <div class="alert alert-warning mt-4">
+        <h5><i class="fas fa-exclamation-triangle"></i> Como corrigir as permissões?</h5>
+        <p>Para corrigir todas as permissões, execute os seguintes comandos no terminal:</p>
+        <pre class="command-block">
+# Definir o proprietário correto para todos os arquivos e diretórios
+sudo chown -R www-data:www-data <?php echo $basePath; ?>
+
+# Definir permissões para diretórios (755)
+sudo find <?php echo $basePath; ?> -type d -exec chmod 755 {} \;
+
+# Definir permissões para arquivos (644)
+sudo find <?php echo $basePath; ?> -type f -exec chmod 644 {} \;
+
+# Garantir permissões específicas para diretórios que precisam de escrita
+chmod -R 755 <?php echo $basePath; ?>/storage
+chmod -R 755 <?php echo $basePath; ?>/public/uploads
+chmod -R 755 <?php echo $basePath; ?>/config</pre>
+
+        <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle"></i> <strong>Explicação das permissões:</strong>
+            <ul class="mb-0">
+                <li><code>755</code> para diretórios: permite leitura e execução para todos, mas escrita apenas para o proprietário</li>
+                <li><code>644</code> para arquivos: permite leitura para todos, mas escrita apenas para o proprietário</li>
+                <li>O usuário <code>www-data</code> é o padrão para servidores web Apache. Se você estiver usando Nginx ou outro servidor, ajuste conforme necessário</li>
+            </ul>
         </div>
-    <?php endif; ?> 
+
+        <p class="mt-2">
+            Se você estiver usando Windows, dê permissão total para os seguintes diretórios:
+            <ul>
+                <li><?php echo $basePath; ?>\storage</li>
+                <li><?php echo $basePath; ?>\public\uploads</li>
+                <li><?php echo $basePath; ?>\config</li>
+            </ul>
+            No Windows, certifique-se de que o usuário IUSR ou o pool de aplicativos do IIS tenha permissões de escrita nesses diretórios.
+        </p>
+    </div>
+    <?php endif; ?>
+</div>
+
+<style>
+.permissions-page {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.permissions-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.command-block {
+    background: #2d2d2d;
+    color: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #000;
+}
+</style> 

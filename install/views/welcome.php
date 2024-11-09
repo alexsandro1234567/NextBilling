@@ -23,24 +23,11 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="d-grid">
-                <a href="?step=requirements" class="btn btn-primary btn-lg">
+                <a href="../install/?step=requirements" class="btn btn-primary btn-lg">
                     <i class="fas fa-arrow-right mr-2"></i>
                     Começar Instalação
                 </a>
             </div>
         </div>
-    </div>
-</div> 
-    <h1 class="mb-4">Bem-vindo ao Marketplace</h1>
-    
-    <p class="lead">
-        Este assistente irá guiá-lo através do processo de instalação.
-        Certifique-se de que seu servidor atende a todos os requisitos antes de continuar.
-    </p>
-    
-    <div class="mt-4">
-        <a href="?step=<?php echo $next_step; ?>" class="btn btn-primary btn-lg">
-            Começar Instalação
-        </a>
     </div>
 </div> 
