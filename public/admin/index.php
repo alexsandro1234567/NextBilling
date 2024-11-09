@@ -1,4 +1,13 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Log da URL atual
+error_log("URL Requisitada: " . $_SERVER['REQUEST_URI']);
+
+// Log das variáveis do servidor
+error_log("SERVER vars: " . print_r($_SERVER, true));
+
 session_start();
 
 // Definir caminho base
